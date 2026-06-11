@@ -21,3 +21,18 @@
   type: http
   url: https://blackcoat.co.uk
   interval: 60
+
+- name: Tillec
+  type: http
+  url: https://tillec.co.uk/
+  interval: 60
+
+- name: BuildQS App
+  type: http
+  url: https://app.buildqs.com/
+  interval: 60
+
+- name: HTFC Hub
+  type: http
+  url: https://hub.htfc.co.uk/login
+  interval: 60
