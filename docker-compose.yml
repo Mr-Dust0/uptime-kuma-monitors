@@ -4,10 +4,17 @@ services:
     # 1.21.3-1.23.2 only. Kuma 2.x changed the Socket.IO API and is NOT yet
     # supported (https://github.com/lucasheld/uptime-kuma-api/issues/74).
     image: louislam/uptime-kuma:1.23.2
-    container_name: uptime-kuma
     restart: always
-    ports:
-      - "3001:3001"
+    # No host port publishing and no container_name: Dokploy's Traefik reaches
+    # the service over dokploy-network, and container_name breaks Dokploy
+    # logs/metrics. Access is via the Domain you configured in Dokploy.
+    networks:
+      - default            # internal: lets the provisioner reach this service
+      - dokploy-network    # external: lets Dokploy's Traefik route the domain
+    labels:
+      # Tell Traefik which network to use to reach this container (required
+      # when the service is attached to more than one network).
+      - traefik.docker.network=dokploy-network
     volumes:
       - uptime-kuma-data:/app/data
       # Only needed for the "Docker Container" monitor type. Mounting the
@@ -18,6 +25,7 @@ services:
   # One-shot sidecar: reads monitors.yaml and pushes each entry into
   # Uptime Kuma via its API, then exits. Re-run any time you edit the file:
   #   docker compose run --rm provisioner
+  # Stays on the default network only, so it reaches Kuma at uptime-kuma:3001.
   provisioner:
     build: ./provisioner
     depends_on:
@@ -31,6 +39,11 @@ services:
     volumes:
       - ./monitors.yaml:/app/monitors.yaml:ro
     restart: "no"
+
+networks:
+  # Dokploy creates this network; we attach to it so Traefik can route traffic.
+  dokploy-network:
+    external: true
 
 volumes:
   uptime-kuma-data:
