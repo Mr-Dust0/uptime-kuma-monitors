@@ -1,6 +1,9 @@
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:2.1.0
+    # Pinned to 1.23.2: the provisioner's uptime-kuma-api library supports
+    # 1.21.3-1.23.2 only. Kuma 2.x changed the Socket.IO API and is NOT yet
+    # supported (https://github.com/lucasheld/uptime-kuma-api/issues/74).
+    image: louislam/uptime-kuma:1.23.2
     container_name: uptime-kuma
     restart: always
     ports:
