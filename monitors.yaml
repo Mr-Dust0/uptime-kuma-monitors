@@ -17,6 +17,11 @@
 # `interval` is seconds between checks. See the README for more fields.
 # ---------------------------------------------------------------------------
 
+- name: Blackcoat
+  type: http
+  url: https://blackcoat.co.uk
+  interval: 60
+
 - name: Example Website
   type: http
   url: https://example.com
