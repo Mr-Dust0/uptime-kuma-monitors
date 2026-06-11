@@ -1,0 +1,9 @@
+# Never commit real secrets
+.env
+
+# Local bind-mounted Kuma data, if you switch to one
+kuma-data/
+
+# Python
+__pycache__/
+*.pyc

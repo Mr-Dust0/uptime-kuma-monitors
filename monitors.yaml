@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# Your monitored servers, as code.
+#
+# Edit this file, then apply it with:
+#   docker compose run --rm provisioner
+#
+# The provisioner matches on `name`: a monitor that already exists is updated
+# in place, a new name is created. Nothing is deleted automatically.
+#
+# Common types and their fields:
+#   http  -> url
+#   port  -> hostname, port        (raw TCP connect check)
+#   ping  -> hostname              (ICMP ping)
+#   dns   -> hostname              (DNS resolution)
+#   docker-> docker_container, docker_host   (needs the docker.sock mount)
+#
+# `interval` is seconds between checks. See the README for more fields.
+# ---------------------------------------------------------------------------
+
+- name: Example Website
+  type: http
+  url: https://example.com
+  interval: 60
+
+- name: Example API Health
+  type: http
+  url: https://example.com/health
+  interval: 30
+
+- name: Database Port
+  type: port
+  hostname: 10.0.0.5
+  port: 5432
+  interval: 60
+
+- name: Gateway Ping
+  type: ping
+  hostname: 10.0.0.1
+  interval: 60

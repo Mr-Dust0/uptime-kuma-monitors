@@ -1,0 +1,33 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.1.0
+    container_name: uptime-kuma
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime-kuma-data:/app/data
+      # Only needed for the "Docker Container" monitor type. Mounting the
+      # Docker socket gives this container root-equivalent control of the
+      # host, so remove this line if you don't monitor containers.
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # One-shot sidecar: reads monitors.yaml and pushes each entry into
+  # Uptime Kuma via its API, then exits. Re-run any time you edit the file:
+  #   docker compose run --rm provisioner
+  provisioner:
+    build: ./provisioner
+    depends_on:
+      - uptime-kuma
+    environment:
+      KUMA_URL: "http://uptime-kuma:3001"
+      # Credentials for the Kuma admin account. On the very first run the
+      # provisioner creates this account; afterwards it logs in with it.
+      KUMA_USERNAME: "${KUMA_USERNAME:-admin}"
+      KUMA_PASSWORD: "${KUMA_PASSWORD:?Set KUMA_PASSWORD in a .env file}"
+    volumes:
+      - ./monitors.yaml:/app/monitors.yaml:ro
+    restart: "no"
+
+volumes:
+  uptime-kuma-data:
